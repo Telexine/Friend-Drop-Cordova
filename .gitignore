@@ -59,3 +59,10 @@ typings/
 
 # next.js build output
 .next
+
+
+# cordova
+/fd/build/*
+/fd/platforms/*
+/fd/plugins/*
+/fd/www/*
