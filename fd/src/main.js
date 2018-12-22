@@ -3,13 +3,26 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import firebase from 'firebase'
+import firebaseui from 'firebaseui';
+import {config} from './helpers/firebaseConfig'
+
 
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
   router,
-  components: { App },
-  template: '<App/>'
-})
+  created() {
+    firebase.initializeApp(config);
+    firebase.auth().onAuthStateChanged((user) => {
+      if(user) {
+        this.$router.push('/success')
+      } else {
+        this.$router.push('/auth')
+      }
+     });
+    },
+  el: '#app',
+  render: h => h(App)
+});
