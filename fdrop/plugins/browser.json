@@ -12,6 +12,9 @@
     },
     "cordova-plugin-browsersync": {
       "PACKAGE_NAME": "com.telexine.fdrop"
+    },
+    "cordova-plugin-geolocation": {
+      "PACKAGE_NAME": "com.telexine.fdrop"
     }
   },
   "dependent_plugins": {}

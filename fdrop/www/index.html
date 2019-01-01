@@ -40,7 +40,8 @@
         <script src="node_modules/firebaseui/dist/firebaseui.js"></script>
         <script src="node_modules/firebase/firebase-app.js"></script>
         <script src="node_modules/firebase/firebase-auth.js"></script>
-
+        <script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCSeA4kIroGg2vLOu5RxTKUCLblfs3X66s&callback=initMap'
+        async defer></script>    
         <link type="text/css" rel="stylesheet" href="node_modules/firebaseui/dist/firebaseui.css" />
         <title>Friend Drop</title>
         <script>
@@ -62,6 +63,8 @@
             // User is signed in.
             document.getElementById("pages").style.display = "block"
             document.getElementById("login").style.display = "none"
+            initMap();
+            
 
             var displayName = user.displayName;
             var email = user.email;
@@ -144,7 +147,7 @@
                     </ons-tabbar>
             </ons-page>
             </div>
-            <div id="login" style="padding:20px">
+            <div id="login" style="padding:20px;display: none;">
                     <div style="margin:auto;max-width: 360px;">
                     <img src="img/fd.png">
                     </div>

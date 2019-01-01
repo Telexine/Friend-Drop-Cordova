@@ -1,9 +1,53 @@
-<ons-page id="Tab1">
-        <p style="text-align: center;">
-              
-          <h1>Welcome to My Awesomeddd App</h1>
-          <div id="sign-in-status"></div>
-          <div id="sign-in"></div>
-          <div id="account-details"></div>
-        </p>
-      </ons-page>
+<ons-page id="Tab1"> 
+<style>
+        #map {
+          height: 100%;
+        }
+        html, body {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+        }
+      </style>
+
+
+        <div id="map"></div>
+ 
+<script>
+ 
+ var iconBase = 'http://earth.google.com/images/kml-icons/track-directional/';
+
+ 
+var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 13.7804764, lng: 100.69563629999999},
+          zoom:  14
+        });
+      }
+var onSuccess = function(position) {
+    myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude)
+    map.setCenter(myLatLng);
+    var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        icon: iconBase + 'track-0.png'
+    });
+        console.log('Latitude: '          + position.coords.latitude          + '\n' +
+              'Longitude: '         + position.coords.longitude         + '\n' +
+              'Altitude: '          + position.coords.altitude          + '\n' +
+              'Accuracy: '          + position.coords.accuracy          + '\n' +
+              'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
+              'Heading: '           + position.coords.heading           + '\n' +
+              'Speed: '             + position.coords.speed             + '\n' +
+              'Timestamp: '         + position.timestamp                + '\n');
+    };
+    function onError(error) {
+        console.log('code: '    + error.code    + '\n' +
+              'message: ' + error.message + '\n');
+    }
+    var watchID = navigator.geolocation.watchPosition(onSuccess, onError, {maximumAge: 3000, timeout: 30000 });
+</script>
+
+
+</ons-page>
