@@ -41,93 +41,88 @@
         <script src="node_modules/firebase/firebase-app.js"></script>
         <script src="node_modules/firebase/firebase-auth.js"></script>
         <script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCSeA4kIroGg2vLOu5RxTKUCLblfs3X66s&callback=initMap'
-        async defer></script>    
+        async defer></script>
+        
+        <script src="js/configs.js"></script>
         <link type="text/css" rel="stylesheet" href="node_modules/firebaseui/dist/firebaseui.css" />
         <title>Friend Drop</title>
         <script>
        
          // FirebaseUI config.
-         var config = {
-            apiKey: "AIzaSyAy0CauI40fU0x9p2yo7TrinvfLy773jdg",
-            authDomain: "friend-drop.firebaseapp.com",
-            databaseURL: "https://friend-drop.firebaseio.com",
-            projectId: "friend-drop",
-            storageBucket: "friend-drop.appspot.com",
-            messagingSenderId: "621509072046"
-          };
-          firebase.initializeApp(config);
-          
-          initApp = function() {
-        firebase.auth().onAuthStateChanged(function(user) {
-          if (user) {
-            // User is signed in.
-            document.getElementById("pages").style.display = "block"
-            document.getElementById("login").style.display = "none"
-            initMap();
+        window.addEventListener('load', function() {
+          firebase.initializeApp(FIREBASE_CONFIG);
             
+          initApp = function() {
+          firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+              // User is signed in.
+              document.getElementById("pages").style.display = "block"
+              document.getElementById("login").style.display = "none"
+              initMap();
+              
 
-            var displayName = user.displayName;
-            var email = user.email;
-            var emailVerified = user.emailVerified;
-            var photoURL = user.photoURL;
-            var uid = user.uid;
-            var phoneNumber = user.phoneNumber;
-            var providerData = user.providerData;
-            user.getIdToken().then(function(accessToken) {
-              document.getElementById('sign-in-status').textContent = 'Signed in';
-              document.getElementById('sign-in').textContent = 'Sign out';
-              document.getElementById('account-details').textContent = JSON.stringify({
-                displayName: displayName,
-                email: email,
-                emailVerified: emailVerified,
-                phoneNumber: phoneNumber,
-                photoURL: photoURL,
-                uid: uid,
-                accessToken: accessToken,
-                providerData: providerData
-              }, null, '  ');
-            });
-          } else {
-            // User is signed out.
-            document.getElementById("pages").style.display = "none"
-            document.getElementById("login").style.display = "block"
-            document.getElementById('sign-in-status').textContent = 'Signed out';
-            document.getElementById('sign-in').textContent = 'Sign in';
-            document.getElementById('account-details').textContent = 'null';
+              var displayName = user.displayName;
+              var email = user.email;
+              var emailVerified = user.emailVerified;
+              var photoURL = user.photoURL;
+              var uid = user.uid;
+              var phoneNumber = user.phoneNumber;
+              var providerData = user.providerData;
+              user.getIdToken().then(function(accessToken) {
+                document.getElementById('sign-in-status').textContent = 'Signed in';
+                document.getElementById('sign-in').textContent = 'Sign out';
+                document.getElementById('account-details').textContent = JSON.stringify({
+                  displayName: displayName,
+                  email: email,
+                  emailVerified: emailVerified,
+                  phoneNumber: phoneNumber,
+                  photoURL: photoURL,
+                  uid: uid,
+                  accessToken: accessToken,
+                  providerData: providerData
+                }, null, '  ');
+              });
+            } else {
+              // User is signed out.
+              document.getElementById("pages").style.display = "none"
+              document.getElementById("login").style.display = "block"
+              document.getElementById('sign-in-status').textContent = 'Signed out';
+              document.getElementById('sign-in').textContent = 'Sign in';
+              document.getElementById('account-details').textContent = 'null';
+            }
+          }, function(error) {
+            console.log(error);
+          });
+        };
+      // FirebaseUI config.
+      var uiConfig = {
+          signInSuccessUrl: '/',
+          signInOptions: [
+            // Leave the lines as is for the providers you want to offer your users.
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+            //firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+          // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+            //firebase.auth.GithubAuthProvider.PROVIDER_ID,
+            //firebase.auth.EmailAuthProvider.PROVIDER_ID,
+            //firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+            firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
+          ],
+          // tosUrl and privacyPolicyUrl accept either url string or a callback
+          // function.
+          // Terms of service url/callback.
+          tosUrl: '<your-tos-url>',
+          // Privacy policy url/callback.
+          privacyPolicyUrl: function() {
+            window.location.assign('<your-privacy-policy-url>');
           }
-        }, function(error) {
-          console.log(error);
-        });
-      };
-     // FirebaseUI config.
-     var uiConfig = {
-        signInSuccessUrl: '/',
-        signInOptions: [
-          // Leave the lines as is for the providers you want to offer your users.
-          firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-          //firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-         // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-          //firebase.auth.GithubAuthProvider.PROVIDER_ID,
-          //firebase.auth.EmailAuthProvider.PROVIDER_ID,
-          //firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-          firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
-        ],
-        // tosUrl and privacyPolicyUrl accept either url string or a callback
-        // function.
-        // Terms of service url/callback.
-        tosUrl: '<your-tos-url>',
-        // Privacy policy url/callback.
-        privacyPolicyUrl: function() {
-          window.location.assign('<your-privacy-policy-url>');
-        }
-      };
+        };
 
-      // Initialize the FirebaseUI Widget using Firebase.
-      var ui = new firebaseui.auth.AuthUI(firebase.auth());
-      // The start method will wait until the DOM is loaded.
-      ui.start('#firebaseui-auth-container', uiConfig);
-      window.addEventListener('load', function() {
-        initApp()
+        // Initialize the FirebaseUI Widget using Firebase.
+        var ui = new firebaseui.auth.AuthUI(firebase.auth());
+        // The start method will wait until the DOM is loaded.
+        ui.start('#firebaseui-auth-container', uiConfig);
+        
+          initApp()
       });
       </script>
     </head>
