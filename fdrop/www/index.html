@@ -49,11 +49,12 @@
         <link type="text/css" rel="stylesheet" href="node_modules/firebaseui/dist/firebaseui.css" />
         <title>Friend Drop</title>
         <script>
-         
+
         // FirebaseUI config.
+        let userStatusDatabaseRef 
         window.addEventListener('load', function() {
            
-          let  db,uid,userStatusDatabaseRef;
+          let  db,uid;
           initApp = function() {
           firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
@@ -61,7 +62,7 @@
               document.getElementById("pages").style.display = "block"
               document.getElementById("login").style.display = "none"
               initMap();
-              db = firebase.firestore();
+              const db = firebase.firestore();
 
               var displayName = user.displayName;
               var email = user.email;
@@ -72,9 +73,25 @@
               var providerData = user.providerData;
 
              userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
-       
- 
-
+              
+               const usersRef  = db.collection("user").doc(uid)
+               // Is user Already exist on the systems
+               usersRef.get()
+                  .then((docSnapshot) => {
+                    if (docSnapshot.exists) {
+                      /*
+                      usersRef.onSnapshot((doc) => {
+                        // do stuff with the data
+                      });*/
+                    } else {
+                      usersRef.set({
+                        displayName:  displayName,
+                        email:email,  
+                        photoURL:photoURL
+                      }) // create the document
+                    }
+                });
+              
               var isOfflineForDatabase = {
                   state: 'offline',
                   last_changed: firebase.database.ServerValue.TIMESTAMP,
@@ -93,12 +110,12 @@
                   if (snapshot.val() == false) {
                       return;
                   };
-
+                
                   // If we are currently connected, then use the 'onDisconnect()' 
                   // method to add a set which will only trigger once this 
                   // client has disconnected by closing the app, 
                   // losing internet, or any other means.
-                  userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function() {
+                  userStatusDatabaseRef.onDisconnect().update(isOfflineForDatabase).then(function() {
                       // The promise returned from .onDisconnect().set() will
                       // resolve as soon as the server acknowledges the onDisconnect() 
                       // request, NOT once we've actually disconnected:
@@ -106,7 +123,7 @@
 
                       // We can now safely set ourselves as 'online' knowing that the
                       // server will mark us as offline once we lose connection.
-                      userStatusDatabaseRef.set(isOnlineForDatabase);
+                      userStatusDatabaseRef.update(isOnlineForDatabase);
                   });
               });
 
@@ -138,6 +155,9 @@
             console.log(error);
           });
         };
+
+  
+
       // FirebaseUI config.
       var uiConfig = {
           signInSuccessUrl: '/',
@@ -168,7 +188,10 @@
           initApp()
       });
       
-
+      let updatecoord = function(Lat,Lng){
+            userStatusDatabaseRef.update({lat:Lat,lng:Lng});
+             
+         }
 
       </script>
     </head>
