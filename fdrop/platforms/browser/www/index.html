@@ -40,17 +40,19 @@
         <script src="node_modules/firebaseui/dist/firebaseui.js"></script>
         <script src="node_modules/firebase/firebase-app.js"></script>
         <script src="node_modules/firebase/firebase-auth.js"></script>
+        <script src="node_modules/firebase/firebase-firestore.js"></script>
+        <script src="node_modules/firebase/firebase-database.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSeA4kIroGg2vLOu5RxTKUCLblfs3X66s&callback=initMap" async defer></script>
         
         <script src="js/configs.js"></script>
         <link type="text/css" rel="stylesheet" href="node_modules/firebaseui/dist/firebaseui.css">
         <title>Friend Drop</title>
         <script>
-       
-         // FirebaseUI config.
+         
+        // FirebaseUI config.
         window.addEventListener('load', function() {
-          firebase.initializeApp(FIREBASE_CONFIG);
-            
+           
+          let  db,uid,userStatusDatabaseRef;
           initApp = function() {
           firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
@@ -58,15 +60,57 @@
               document.getElementById("pages").style.display = "block"
               document.getElementById("login").style.display = "none"
               initMap();
-              
+              db = firebase.firestore();
 
               var displayName = user.displayName;
               var email = user.email;
               var emailVerified = user.emailVerified;
               var photoURL = user.photoURL;
-              var uid = user.uid;
+              uid = firebase.auth().currentUser.uid;
               var phoneNumber = user.phoneNumber;
               var providerData = user.providerData;
+
+             userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
+       
+ 
+
+              var isOfflineForDatabase = {
+                  state: 'offline',
+                  last_changed: firebase.database.ServerValue.TIMESTAMP,
+              };
+              var isOnlineForDatabase = {
+                  state: 'online',
+                  last_changed: firebase.database.ServerValue.TIMESTAMP,
+              };
+              
+
+              // Create a reference to the special '.info/connected' path in 
+              // Realtime Database. This path returns `true` when connected
+              // and `false` when disconnected.
+              firebase.database().ref('.info/connected').on('value', function(snapshot) {
+                  // If we're not currently connected, don't do anything.
+                  if (snapshot.val() == false) {
+                      return;
+                  };
+
+                  // If we are currently connected, then use the 'onDisconnect()' 
+                  // method to add a set which will only trigger once this 
+                  // client has disconnected by closing the app, 
+                  // losing internet, or any other means.
+                  userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function() {
+                      // The promise returned from .onDisconnect().set() will
+                      // resolve as soon as the server acknowledges the onDisconnect() 
+                      // request, NOT once we've actually disconnected:
+                      // https://firebase.google.com/docs/reference/js/firebase.database.OnDisconnect
+
+                      // We can now safely set ourselves as 'online' knowing that the
+                      // server will mark us as offline once we lose connection.
+                      userStatusDatabaseRef.set(isOnlineForDatabase);
+                  });
+              });
+
+
+
               user.getIdToken().then(function(accessToken) {
                 document.getElementById('sign-in-status').textContent = 'Signed in';
                 document.getElementById('sign-in').textContent = 'Sign out';
@@ -120,9 +164,11 @@
         var ui = new firebaseui.auth.AuthUI(firebase.auth());
         // The start method will wait until the DOM is loaded.
         ui.start('#firebaseui-auth-container', uiConfig);
-        
           initApp()
       });
+      
+
+
       </script>
     </head>
     <body>

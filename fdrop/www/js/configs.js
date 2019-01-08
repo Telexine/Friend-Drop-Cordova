@@ -6,7 +6,7 @@ var FIREBASE_CONFIG = {
     storageBucket: "friend-drop.appspot.com",
     messagingSenderId: "621509072046"
   };
-
+  firebase.initializeApp(FIREBASE_CONFIG);
 
 
  
