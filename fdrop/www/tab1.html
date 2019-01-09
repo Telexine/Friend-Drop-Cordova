@@ -8,35 +8,118 @@
           margin: 0;
           padding: 0;
         }
+        .dialog-container{
+            min-width: 25rem;
+            height: 40rem;
+            background-color: transparent;
+        }
+
+        .page > .page__background {
+            background: transparent;
+        }
+
       </style>
 
 
         <div id="map"></div>
+       
+<template id="dialog.html">
+    <ons-dialog id="my-dialog">
+        <ons-page>
  
+          
+            <ons-card>
+              <img src="https://monaca.io/img/logos/download_image_onsenui_01.png" alt="Onsen UI" style="width: 100%">
+              <div class="title">
+                <p>
+                    <ons-input id="Title" modifier="underbar" placeholder="เรื่อง" float style="width: 100%;"></ons-input>
+                </p>
+              </div>
+              <div class="content">
+                <div>
+                  <ons-button><ons-icon icon="ion-thumbsup"></ons-icon></ons-button>
+                  <ons-button><ons-icon icon="ion-share"></ons-icon></ons-button>
+                </div>
+                <ons-list>
+                  <ons-list-header>Bindings</ons-list-header>
+                  <ons-list-item>Vue</ons-list-item>
+                  <ons-list-item>Angular</ons-list-item>
+                  <ons-list-item>React</ons-list-item>
+                </ons-list>
+              </div>
+            </ons-card>
+          </ons-page>
+          <ons-button onclick="hideDialog('my-dialog')">Close</ons-button>
+       
+       
+    </ons-dialog>
+  </template>
 <script>
  
 
  var iconBase = 'http://earth.google.com/images/kml-icons/track-directional/';
 
+ function writeButton(){
+    var btn = $(`
+    <ons-fab style="margin:.2em">
+        <ons-icon icon="fa-comment"></ons-icon>
+    </ons-fab>
+    `);
+    btn.bind('click', function(){
+         
+        showTemplateDialog();
+    });
+    return btn[0];
+}
 
-var map;
+var showTemplateDialog = function() {
+  var dialog = document.getElementById('my-dialog');
+  
+  if (dialog) {
+    dialog.show();
+  } else {
+    ons.createElement('dialog.html', { append: true })
+      .then(function(dialog) {
+        $('.dialog-mask').bind('click',function(){ hideDialog('my-dialog')})
+        dialog.show();
+      });
+  }
+};
+
+var hideDialog = function(id) {
+  document
+    .getElementById(id)
+    .hide();
+};
+
+let map;
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 13.680473, lng: 100.7056362999 },
-          zoom:  17
+          zoom:  16,
+          disableDefaultUI: true,
+          
         });
+        map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(writeButton());
       }
+ 
+
+      var markers = [];
 var onSuccess = function(position) {
+    clearLocations() 
     myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude)
     map.setCenter(myLatLng);
     updatecoord(position.coords.latitude,position.coords.longitude);
-    
- 
-    var marker = new google.maps.Marker({
+  
+    createMarker(myLatLng,"1","2","4","5","6")
+
+
+    /*
+     let marker = new google.maps.Marker({
         position: myLatLng,
         map: map,
         icon: iconBase + 'track-0.png'
-    });
+    })*/
         console.log('Latitude: '          + position.coords.latitude          + '\n' +
               'Longitude: '         + position.coords.longitude         + '\n' +
               'Altitude: '          + position.coords.altitude          + '\n' +
@@ -51,6 +134,45 @@ var onSuccess = function(position) {
               'message: ' + error.message + '\n');
     }
     var watchID = navigator.geolocation.watchPosition(onSuccess, onError, {maximumAge: 3000, timeout: 30000 });
+    
+    
+    function clearLocations() {
+            info_Window = new google.maps.InfoWindow();
+            info_Window.close();
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(null);
+            }
+            markers.length = 0;
+        }
+    
+    function createMarker(point, addName, address1, town, postcode, direction) {
+            var image = '/img/logo.png';
+            var marker;
+            marker = 0;
+            marker = new google.maps.Marker({
+                map: map,
+                icon: image,
+                position: point,
+                title: address1,
+                animation: google.maps.Animation.DROP
+
+            });
+            
+            var html;
+ 
+             
+            html = '<div class="test">' + addName + '<br />' + address1 + ', ' + town + '<br />' + postcode + '<br />' + direction + '</div>';
+             
+            info_Window = new google.maps.InfoWindow();
+            google.maps.event.addListener(marker, "click", function () {
+                info_Window.setContent(html);
+                info_Window.open(map, marker);
+            });
+
+            markers.push(marker); 
+            return marker; //here i return only marker for the side bar.
+        }
+
 </script>
 
 
