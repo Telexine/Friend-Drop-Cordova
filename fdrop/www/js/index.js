@@ -22,7 +22,28 @@
 var app = {
     // Application Constructor
     initialize: function() {
-        
+        console.log("initialize")
+        document.addEventListener("offline", onOffline, false);
+        document.addEventListener("online", onOnline, false);
+            function onOffline() {
+                // Handle the offline event
+                console.log("offline")
+            }
+            function onOnline() {
+                initApp()
+                
+                // Handle the online event
+            }
+            shake.startWatch(onShake, 40 /*, onError */);
+            var onShake = function () {
+              // Fired when a shake is detected
+              console.log("shake")
+            };
+            
+            var onError = function () {
+              // Fired when there is an accelerometer error (optional)
+            };
+
     },
 
     // deviceready Event Handler
@@ -31,11 +52,13 @@ var app = {
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
         this.receivedEvent('deviceready');
+        console.log("deviceready")
     },
 
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-        /*
+        console.log(id)
+   
         var parentElement = document.getElementById(id);
         var listeningElement = parentElement.querySelector('.listening');
         var receivedElement = parentElement.querySelector('.received');
@@ -43,7 +66,7 @@ var app = {
         listeningElement.setAttribute('style', 'display:none;');
         receivedElement.setAttribute('style', 'display:block;');
 
-        console.log('Received Event: ' + id);*/
+        console.log('Received Event: ' + id);
     }
 };
 

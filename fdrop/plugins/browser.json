@@ -15,7 +15,17 @@
     },
     "cordova-plugin-geolocation": {
       "PACKAGE_NAME": "com.telexine.fdrop"
+    },
+    "cordova-plugin-network-information": {
+      "PACKAGE_NAME": "com.telexine.fdrop"
+    },
+    "cordova-plugin-shake": {
+      "PACKAGE_NAME": "com.telexine.fdrop"
     }
   },
-  "dependent_plugins": {}
+  "dependent_plugins": {
+    "cordova-plugin-device-motion": {
+      "PACKAGE_NAME": "com.telexine.fdrop"
+    }
+  }
 }

@@ -17,7 +17,9 @@
         .page > .page__background {
             background: transparent;
         }
-
+        *.button{
+          margin-top:5px;
+        }
       </style>
 
 
@@ -32,24 +34,17 @@
               <img src="https://monaca.io/img/logos/download_image_onsenui_01.png" alt="Onsen UI" style="width: 100%">
               <div class="title">
                 <p>
-                    <ons-input id="Title" modifier="underbar" placeholder="เรื่อง" float style="width: 100%;"></ons-input>
+                    <ons-input id="story" max="40" min="3" modifier="material" placeholder="เรื่อง" float style="width: 100%;"></ons-input>
                 </p>
               </div>
               <div class="content">
                 <div>
-                  <ons-button><ons-icon icon="ion-thumbsup"></ons-icon></ons-button>
-                  <ons-button><ons-icon icon="ion-share"></ons-icon></ons-button>
+                  <ons-button  modifier="large--cta" onclick="sendDrop(false,document.getElementById('story').value)">Drop <ons-icon icon="ion-happy"></ons-icon></ons-button>
+                  <ons-button style="background-color: crimson"modifier="large" onclick="sendDrop(true,document.getElementById('story').value)" >Anonymouse Drop <ons-icon icon="ion-eye-off"></ons-icon> </ons-button>
                 </div>
-                <ons-list>
-                  <ons-list-header>Bindings</ons-list-header>
-                  <ons-list-item>Vue</ons-list-item>
-                  <ons-list-item>Angular</ons-list-item>
-                  <ons-list-item>React</ons-list-item>
-                </ons-list>
               </div>
             </ons-card>
           </ons-page>
-          <ons-button onclick="hideDialog('my-dialog')">Close</ons-button>
        
        
     </ons-dialog>
@@ -58,6 +53,7 @@
  
 
  var iconBase = 'http://earth.google.com/images/kml-icons/track-directional/';
+
 
  function writeButton(){
     var btn = $(`
@@ -74,7 +70,8 @@
 
 var showTemplateDialog = function() {
   var dialog = document.getElementById('my-dialog');
-  
+  $("#story").removeClass("animated shake")
+   
   if (dialog) {
     dialog.show();
   } else {
@@ -105,15 +102,16 @@ let map;
  
 
       var markers = [];
+      let coord = [];
 var onSuccess = function(position) {
+    initMap()
     clearLocations() 
     myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude)
     map.setCenter(myLatLng);
     updatecoord(position.coords.latitude,position.coords.longitude);
   
     createMarker(myLatLng,"1","2","4","5","6")
-
-
+    coord = [position.coords.latitude,position.coords.longitude]
     /*
      let marker = new google.maps.Marker({
         position: myLatLng,
@@ -135,6 +133,7 @@ var onSuccess = function(position) {
     }
     var watchID = navigator.geolocation.watchPosition(onSuccess, onError, {maximumAge: 3000, timeout: 30000 });
     
+    let getpos = function(){return coord}
     
     function clearLocations() {
             info_Window = new google.maps.InfoWindow();

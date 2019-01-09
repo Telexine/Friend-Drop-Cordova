@@ -32,6 +32,7 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
         <link rel="stylesheet" type="text/css" href="css/index.css">
+        <link rel="stylesheet" type="text/css" href="css/animate.css">
 
         <link rel="stylesheet" href="node_modules/onsenui/css/onsenui.css">
         <link rel="stylesheet" href="node_modules/onsenui/css/onsen-css-components.min.css">
@@ -42,7 +43,7 @@
         <script src="node_modules/firebase/firebase-auth.js"></script>
         <script src="node_modules/firebase/firebase-firestore.js"></script>
         <script src="node_modules/firebase/firebase-database.js"></script>
-        <script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCSeA4kIroGg2vLOu5RxTKUCLblfs3X66s&callback=initMap'
+        <script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCSeA4kIroGg2vLOu5RxTKUCLblfs3X66s'
         async defer></script>
         
         <script src="js/configs.js"></script>
@@ -50,19 +51,45 @@
         <title>Friend Drop</title>
         <script>
 
-        // FirebaseUI config.
+        //shake 
+
         let userStatusDatabaseRef 
-        window.addEventListener('load', function() {
-           
-          let  db,uid;
+
+         
+      let sendDrop = function(anon,story){
+        $("#story").removeClass("animated shake")
+          if(story==""){
+            $("#story").addClass("animated shake")
+            return;
+          }
+          $("#story").removeClass("animated shake")
+              const dropRef  = db.collection("drop")
+              coord = getpos()
+                
+              console.log(coord)
+              dropRef.add({
+                story:story,
+                anonymity:anon,
+                lat: coord[0],
+                lon: coord[1],
+                last_changed: firebase.firestore.FieldValue.serverTimestamp(),
+                user:uid
+              })
+        }
+          let  uid;
+          
+          const db = firebase.firestore();
+
           initApp = function() {
+          console.log("initApp")
           firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
               // User is signed in.
               document.getElementById("pages").style.display = "block"
               document.getElementById("login").style.display = "none"
-              initMap();
-              const db = firebase.firestore();
+              console.log("logged")
+              
+             
 
               var displayName = user.displayName;
               var email = user.email;
@@ -73,8 +100,9 @@
               var providerData = user.providerData;
 
              userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
-              
+               
                const usersRef  = db.collection("user").doc(uid)
+               
                // Is user Already exist on the systems
                usersRef.get()
                   .then((docSnapshot) => {
@@ -110,7 +138,7 @@
                   if (snapshot.val() == false) {
                       return;
                   };
-                
+                  initMap()
                   // If we are currently connected, then use the 'onDisconnect()' 
                   // method to add a set which will only trigger once this 
                   // client has disconnected by closing the app, 
@@ -145,6 +173,7 @@
               });
             } else {
               // User is signed out.
+              console.log("not logged")
               document.getElementById("pages").style.display = "none"
               document.getElementById("login").style.display = "block"
               document.getElementById('sign-in-status').textContent = 'Signed out';
@@ -185,8 +214,8 @@
         var ui = new firebaseui.auth.AuthUI(firebase.auth());
         // The start method will wait until the DOM is loaded.
         ui.start('#firebaseui-auth-container', uiConfig);
-          initApp()
-      });
+           
+    
       
       let updatecoord = function(Lat,Lng){
             userStatusDatabaseRef.update({lat:Lat,lon:Lng});
