@@ -109,7 +109,9 @@ var onSuccess = function(position) {
     myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude)
     map.setCenter(myLatLng);
     updatecoord(position.coords.latitude,position.coords.longitude);
-  
+
+
+    fetchallDrop()
     createMarker(myLatLng,"1","2","4","5","6")
     coord = [position.coords.latitude,position.coords.longitude]
     /*
@@ -143,7 +145,10 @@ var onSuccess = function(position) {
             }
             markers.length = 0;
         }
-    
+    let fetchallDrop = function(){
+      console.log(getAllDrop())
+      //createMarker(myLatLng,"1","2","4","5","6")
+    }
     function createMarker(point, addName, address1, town, postcode, direction) {
             var image = '/img/logo.png';
             var marker;

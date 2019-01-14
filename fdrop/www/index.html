@@ -51,10 +51,27 @@
         <title>Friend Drop</title>
         <script>
 
-        //shake 
-
+    
+        var dropCache = {
+            source: 'cache'
+        };
         let userStatusDatabaseRef 
-
+      let getAllDrop = function(){
+        const dropRef  = db.collection("drop")
+        let data= [];
+        // Get a document, forcing the SDK to fetch from the offline cache.
+        dropRef.get().then(function(query) {
+            
+              query.forEach(function(doc) {
+              // doc.data() is never undefined for query doc snapshots
+     
+              data.push({id:doc.id,data:doc.data()});
+                
+              })
+              console.log(doc.id, " => ", doc.data());
+          });
+          return data
+      };
          
       let sendDrop = function(anon,story){
         $("#story").removeClass("animated shake")
