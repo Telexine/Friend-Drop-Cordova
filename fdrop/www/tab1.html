@@ -13,12 +13,19 @@
             height: 40rem;
             background-color: transparent;
         }
+        .drop{
 
+        }
         .page > .page__background {
             background: transparent;
         }
         *.button{
           margin-top:5px;
+        }
+        .storyline{
+          text-align: left;
+          font-size: 1.3em;
+          font-weight: bold;
         }
       </style>
 
@@ -152,11 +159,9 @@ var onSuccess = function(position) {
             //console.log(drops);
             drops.forEach(drop => {
               console.log(drop)
-              createMarker(new google.maps.LatLng(drop.data.lat,drop.data.lon),drop.data,"2","4","5","6")
+              createMarker(new google.maps.LatLng(drop.data.lat,drop.data.lon),drop.data.story,drop.data.name,drop.data.last_changed,drop.id,"6")
               
             });
-
-
             resolve(drops);
          });
          
@@ -168,7 +173,7 @@ var onSuccess = function(position) {
       }*/
       //createMarker(myLatLng,"1","2","4","5","6")
     }
-    function createMarker(point, addName, address1, town, postcode, direction) {
+    function createMarker(point, story, user, date, postID, direction) {
             var image = '/img/logo.png';
             var marker;
             marker = 0;
@@ -176,15 +181,23 @@ var onSuccess = function(position) {
                 map: map,
                 icon: image,
                 position: point,
-                title: address1,
+                title: story,
                 animation: google.maps.Animation.DROP
 
             });
-            
+            let d = new Date(date);
+           
+            option = {weekday: 'short'}
+            ts = d.toLocaleTimeString()+" "+d.toLocaleDateString('en-US',option)
+
             var html;
  
              
-            html = '<div class="test">' + addName + '<br />' + address1 + ', ' + town + '<br />' + postcode + '<br />' + direction + '</div>';
+            html = `<div class="drop"><span class="storyline"> ${story} </span> <br/>
+                    ${user}@${ts}<br/>
+                    <ons-button><i class="material-icons">thumb_up</i></ons-button>
+                    <ons-button style="background-color:red"><i class="material-icons">thumb_down</i></ons-button><br/>
+                   <span style="font-size:0.6em">${postID}</span></div>`;
              
             info_Window = new google.maps.InfoWindow();
             google.maps.event.addListener(marker, "click", function () {

@@ -45,8 +45,10 @@
         <script src="node_modules/firebase/firebase-database.js"></script>
         <script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCSeA4kIroGg2vLOu5RxTKUCLblfs3X66s'
         async defer></script>
-        
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
         <script src="js/configs.js"></script>
+ 
         <link type="text/css" rel="stylesheet" href="node_modules/firebaseui/dist/firebaseui.css" />
         <title>Friend Drop</title>
         <script>
@@ -55,7 +57,7 @@
         var dropCache = {
             source: 'cache'
         };
-        let userStatusDatabaseRef 
+      
       let getAllDrop = async function(){
         const dropRef  = db.collection("drop")
         let data= [];
@@ -89,13 +91,15 @@
                 lat: coord[0],
                 lon: coord[1],
                 last_changed: firebase.firestore.FieldValue.serverTimestamp(),
-                user:uid
+                user:uid,
+                name:displayName
               })
         }
-          let  uid;
-          
+          let  uid,displayName;
+          const settings = {timestampsInSnapshots: true}
           const db = firebase.firestore();
-
+          db.settings(settings);
+          const  userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
           initApp = function() {
           console.log("initApp")
           firebase.auth().onAuthStateChanged(function(user) {
@@ -107,7 +111,7 @@
               
              
 
-              var displayName = user.displayName;
+                displayName = user.displayName;
               var email = user.email;
               var emailVerified = user.emailVerified;
               var photoURL = user.photoURL;
@@ -115,7 +119,7 @@
               var phoneNumber = user.phoneNumber;
               var providerData = user.providerData;
 
-             userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
+            
                
                const usersRef  = db.collection("user").doc(uid)
                
@@ -234,8 +238,11 @@
     
       
       let updatecoord = function(Lat,Lng){
+        try{
             userStatusDatabaseRef.update({lat:Lat,lon:Lng});
-             
+        }catch(E){
+          console.log("can't update COORD to svr")
+        }
          }
 
       </script>
