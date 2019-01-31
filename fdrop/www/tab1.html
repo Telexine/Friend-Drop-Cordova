@@ -119,7 +119,7 @@ var onSuccess = function(position) {
 
 
     fetchallDrop().then(function(result){console.log("Fetch All drops")})
-    createMarker(myLatLng,"1","2","4","5","6")
+    createMarker(myLatLng,"me","2","4","5","6")
     coord = [position.coords.latitude,position.coords.longitude]
     /*
      let marker = new google.maps.Marker({
@@ -159,7 +159,7 @@ var onSuccess = function(position) {
             //console.log(drops);
             drops.forEach(drop => {
               console.log(drop)
-              createMarker(new google.maps.LatLng(drop.data.lat,drop.data.lon),drop.data.story,drop.data.name,drop.data.last_changed,drop.id,"6")
+              createMarker(new google.maps.LatLng(drop.data.lat,drop.data.lon),drop.data.story,drop.data.name,drop.data.last_changed.toDate(),drop.id,"6")
               
             });
             resolve(drops);
@@ -188,8 +188,9 @@ var onSuccess = function(position) {
             let d = new Date(date);
            
             option = {weekday: 'short'}
+            
             ts = d.toLocaleTimeString()+" "+d.toLocaleDateString('en-US',option)
-
+             
             var html;
  
              
