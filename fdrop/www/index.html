@@ -48,7 +48,7 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
         <script src="js/configs.js"></script>
- 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.3/Rx.js"></script>
         <link type="text/css" rel="stylesheet" href="node_modules/firebaseui/dist/firebaseui.css" />
         <title>Friend Drop</title>
         <script>
@@ -57,7 +57,27 @@
         var dropCache = {
             source: 'cache'
         };
-      
+        let pushThumb = function(dropID,upvote/*true = Up; false = down*/){
+            const voteRef  = db.collection("votes").doc(dropID)
+
+                // Is vote Already exist on the systems
+                voteRef.get({ source: 'server' })
+                    .then((docSnapshot) => {
+                      if (docSnapshot.exists) {
+                               point = docSnapshot.data().vote+(upvote? 1:-1)
+                              voteRef.update({
+                                vote: point
+                              })  
+                        
+                      } else {
+                          voteRef.set({
+                            dropID:  dropID,
+                            vote:(upvote? 1:-1)
+                          }) // create the document
+                        }
+                  });
+        }
+       
       let getAllDrop = async function(){
         const dropRef  = db.collection("drop")
         let data= [];
@@ -83,8 +103,7 @@
           $("#story").removeClass("animated shake")
               const dropRef  = db.collection("drop")
               coord = getpos()
-                
-              console.log(coord)
+             
               dropRef.add({
                 story:story,
                 anonymity:anon,
@@ -244,7 +263,11 @@
           console.log("can't update COORD to svr")
         }
          }
-
+      let  debounce = function(el, event, time = 2000) {
+        var element = document.querySelector(el)
+        var eventObserver = Rx.Observable.fromEvent(element, event);
+        return eventObserver.debounceTime(time).map(event => event.target.value);
+      }
       </script>
     </head>
     <body>
@@ -252,13 +275,13 @@
             <ons-page>
                     
                     <ons-toolbar>
-                      <div class="center">Tab 1</div>
+                      <div class="center">Meaw Drop</div>
                     </ons-toolbar>
                   
                     <ons-tabbar swipeable position="auto">
-                      <ons-tab page="/tab1.html" label="Tab 1" icon="ion-home, material:md-home" badge="7" active>
+                      <ons-tab page="/tab1.html" label="Drop" icon="ion-home, material:md-home" badge="7" active>
                       </ons-tab>
-                      <ons-tab page="/tab2.html" label="Tab 2" icon="md-settings" active-icon="md-face">
+                      <ons-tab page="/tab2.html" label="Your Info" icon="md-settings" active-icon="md-face">
                       </ons-tab>
                     </ons-tabbar>
             </ons-page>
