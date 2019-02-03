@@ -27,6 +27,14 @@
           font-size: 1.3em;
           font-weight: bold;
         }
+        .vote{
+          font-size: 2em;
+          font-weight: 10;
+        }
+        .btn_thumb{
+          width: 13rem;
+          height: 6rem;
+        }
       </style>
 
 
@@ -111,6 +119,7 @@ let map;
       var markers = [];
       let coord = [];
 var onSuccess = function(position) {
+    // hide load func(); 
     initMap()
     clearLocations() 
     myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude)
@@ -152,14 +161,29 @@ var onSuccess = function(position) {
             }
             markers.length = 0;
         }
+
     let fetchallDrop = async function(){
     
        getdropsPromise = new Promise((resolve,reject)=>{
           getAllDrop().then(function(drops){
             //console.log(drops);
             drops.forEach(drop => {
-              console.log(drop)
-              createMarker(new google.maps.LatLng(drop.data.lat,drop.data.lon),drop.data.story,drop.data.name,drop.data.last_changed.toDate(),drop.id,"6")
+              
+              
+              const voteRef  = db.collection("votes").doc(drop.id)
+              vote = 0
+              // Is vote Already exist on the systems
+              voteRef.get({ source: 'server' })
+                     .then((docSnapshot) => {
+                  
+                    if (docSnapshot.exists) {
+                      vote =  docSnapshot.data().vote
+                    }
+                    createMarker(new google.maps.LatLng(drop.data.lat,drop.data.lon),drop.data.story,drop.data.name,drop.data.last_changed.toDate(),drop.id,vote)
+              });
+
+
+              
               
             });
             resolve(drops);
@@ -173,10 +197,12 @@ var onSuccess = function(position) {
       }*/
       //createMarker(myLatLng,"1","2","4","5","6")
     }
-    function createMarker(point, story, user, date, postID, direction) {
-            var image = '/img/logo.png';
+    function createMarker(point, story, user, date, dropID,vote) {
+
+            var image = (story=="me"? '/img/logo.png':'/img/logo.png')
             var marker;
-            marker = 0;
+ 
+
             marker = new google.maps.Marker({
                 map: map,
                 icon: image,
@@ -193,12 +219,13 @@ var onSuccess = function(position) {
              
             var html;
  
-             
-            html = `<div class="drop"><span class="storyline"> ${story} </span> <br/>
-                    ${user}@${ts}<br/>
-                    <ons-button><i class="material-icons">thumb_up</i></ons-button>
-                    <ons-button style="background-color:red"><i class="material-icons">thumb_down</i></ons-button><br/>
-                   <span style="font-size:0.6em">${postID}</span></div>`;
+  
+            html = `<div class="drop"><span class="storyline"> ${story}  </span> -><span class="vote" style="color:${(vote>0?"green":"red")}">${vote}</span>  <br/>
+                      ${user}@${ts}    <br/>
+                      <ons-button id='UP_${dropID}' onclick="pushThumb('${dropID}',true);return false;"><i class="material-icons btn_thumb">thumb_up</i></ons-button>
+                      <ons-button id='DOWN_${dropID}' onclick="pushThumb('${dropID}',false);return false;"  style="background-color:red"><i class="material-icons btn_thumb">thumb_down</i></ons-button><br/>
+                    <span style="font-size:0.6em">id:${dropID}</span>
+                   </div>`;
              
             info_Window = new google.maps.InfoWindow();
             google.maps.event.addListener(marker, "click", function () {
@@ -207,7 +234,9 @@ var onSuccess = function(position) {
             });
 
             markers.push(marker); 
-            return marker; //here i return only marker for the side bar.
+
+
+            return marker; 
         }
 
 </script>
