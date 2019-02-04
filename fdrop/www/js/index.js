@@ -28,6 +28,8 @@ var app = {
             function onOffline() {
                 // Handle the offline event
                 console.log("offline")
+                ons.notification.alert("You are Offline");
+                 
             }
             function onOnline() {
                 initApp()

@@ -35,6 +35,66 @@
           width: 13rem;
           height: 6rem;
         }
+        
+        /* Loading CSS */
+        .spinner {
+          width: 80px;
+          height: 80px;
+          position: relative;
+          margin: 100px auto;
+        }
+        .double-bounce1, .double-bounce2 {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: rgb(17, 146, 231);
+            opacity: 0.6;
+            position: absolute;
+            top: 0;
+            left: 0;
+            
+            -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+            animation: sk-bounce 2.0s infinite ease-in-out;
+          }
+
+          .double-bounce2 {
+            -webkit-animation-delay: -1.0s;
+            animation-delay: -1.0s;
+          }
+
+          @-webkit-keyframes sk-bounce {
+            0%, 100% { -webkit-transform: scale(0.0) }
+            50% { -webkit-transform: scale(1.0) }
+          }
+
+          @keyframes sk-bounce {
+            0%, 100% { 
+              transform: scale(0.0);
+              -webkit-transform: scale(0.0);
+            } 50% { 
+              transform: scale(1.0);
+              -webkit-transform: scale(1.0);
+            }
+          }
+          
+
+ 
+          .loading_area {
+ 
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 60px;
+            right: 0;
+            margin: auto;
+            z-index: 13333;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+          }
+            /* Loading CSS */
       </style>
 
 
@@ -106,6 +166,7 @@ var hideDialog = function(id) {
 
 let map;
       function initMap() {
+        loading("map",true)
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 13.680473, lng: 100.7056362999 },
           zoom:  16,
@@ -113,6 +174,9 @@ let map;
           
         });
         map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(writeButton());
+
+
+        
       }
  
 
@@ -120,6 +184,7 @@ let map;
       let coord = [];
 var onSuccess = function(position) {
     // hide load func(); 
+    
     initMap()
     clearLocations() 
     myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude)
@@ -129,6 +194,7 @@ var onSuccess = function(position) {
 
     fetchallDrop().then(function(result){console.log("Fetch All drops")})
     createMarker(myLatLng,"me","2","4","5","6")
+    loading("map",false)
     coord = [position.coords.latitude,position.coords.longitude]
     /*
      let marker = new google.maps.Marker({
@@ -146,10 +212,12 @@ var onSuccess = function(position) {
               'Timestamp: '         + position.timestamp                + '\n');
     };
     function onError(error) {
+      ons.notification.alert("Can't get GPS");
+
         console.log('code: '    + error.code    + '\n' +
               'message: ' + error.message + '\n');
     }
-    var watchID = navigator.geolocation.watchPosition(onSuccess, onError, {maximumAge: 3000, timeout: 30000 });
+    var watchID = navigator.geolocation.watchPosition(onSuccess, onError, {maximumAge: 3000, timeout: 3000 });
     
     let getpos = function(){return coord}
     
@@ -197,20 +265,56 @@ var onSuccess = function(position) {
       }*/
       //createMarker(myLatLng,"1","2","4","5","6")
     }
+    function htmlToElement(html) {
+      var template = document.createElement('template');
+      html = html.trim(); // Never return a text node of whitespace as the result
+      template.innerHTML = html;
+      return template.content.firstChild;
+    }
+
+    let loading = function(element,state){
+        if(state){
+          var el = document.getElementById(element)
+            html = `<div class="loading_area">
+                      <div class="spinner">
+                      <div class="double-bounce1"></div>
+                      <div class="double-bounce2"></div>
+                      </div>
+                    </div>`
+          el.parentElement.prepend(htmlToElement(html))
+        }else{
+          //document.getElementById("loading_area").remove();
+          $(".loading_area").remove();
+       //   document.getElementsByClassName("loading_area").outerHTML = "";
+        }
+
+    }
     function createMarker(point, story, user, date, dropID,vote) {
 
-            var image = (story=="me"? '/img/logo.png':'/img/logo.png')
+            var image = (story=="me"? '/img/girl.png':'/img/animal/'+(Math.floor(Math.random() * 16) + 1  )+'.png')
             var marker;
- 
-
-            marker = new google.maps.Marker({
+            let options;
+            if(story!="me"){
+              options =  {
+                  map: map,
+                  icon: image,
+                  position: point,
+                  title: story,
+                  animation: google.maps.Animation.DROP
+              }
+            }else{
+               options =  {
                 map: map,
                 icon: image,
                 position: point,
                 title: story,
-                animation: google.maps.Animation.DROP
+                animation: google.maps.Animation.DROP,
+                optimized: false,
+                zIndex:99999999
 
-            });
+            }
+          }
+            marker = new google.maps.Marker(options);
             let d = new Date(date);
            
             option = {weekday: 'short'}
@@ -229,8 +333,12 @@ var onSuccess = function(position) {
              
             info_Window = new google.maps.InfoWindow();
             google.maps.event.addListener(marker, "click", function () {
+              if(story=="me"){
+                  
+              }else{
                 info_Window.setContent(html);
                 info_Window.open(map, marker);
+              }
             });
 
             markers.push(marker); 
