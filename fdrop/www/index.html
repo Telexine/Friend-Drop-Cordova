@@ -50,7 +50,7 @@
         <script src="js/configs.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.3/Rx.js"></script>
         <link type="text/css" rel="stylesheet" href="node_modules/firebaseui/dist/firebaseui.css" />
-        <title>Friend Drop</title>
+        <title>Meow Drop</title>
         <script>
 
     
@@ -103,7 +103,7 @@
           $("#story").removeClass("animated shake")
               const dropRef  = db.collection("drop")
               coord = getpos()
-             
+               
               dropRef.add({
                 story:story,
                 anonymity:anon,
@@ -114,12 +114,13 @@
                 name:displayName
               })
         }
-          let  uid,displayName;
-          const settings = {timestampsInSnapshots: true}
-          const db = firebase.firestore();
-          db.settings(settings);
-          const  userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
-          initApp = function() {
+        let  uid,displayName;
+        const settings = {timestampsInSnapshots: true}
+        const db = firebase.firestore();
+        db.settings(settings);
+        const  userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
+
+        initApp = function() {
           console.log("initApp")
           firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
@@ -177,7 +178,7 @@
                   if (snapshot.val() == false) {
                       return;
                   };
-                  initMap()
+                  
                   // If we are currently connected, then use the 'onDisconnect()' 
                   // method to add a set which will only trigger once this 
                   // client has disconnected by closing the app, 
@@ -268,16 +269,7 @@
         var eventObserver = Rx.Observable.fromEvent(element, event);
         return eventObserver.debounceTime(time).map(event => event.target.value);
       }
-      Element.prototype.remove = function() {
-          this.parentElement.removeChild(this);
-      }
-      NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
-          for(var i = this.length - 1; i >= 0; i--) {
-              if(this[i] && this[i].parentElement) {
-                  this[i].parentElement.removeChild(this[i]);
-              }
-          }
-      }
+ 
       </script>
     </head>
     <body>

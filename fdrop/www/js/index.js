@@ -33,7 +33,7 @@ var app = {
             }
             function onOnline() {
                 initApp()
-                
+                initMap()
                 // Handle the online event
             }
     },

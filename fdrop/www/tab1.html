@@ -32,7 +32,7 @@
           font-weight: 10;
         }
         .btn_thumb{
-          width: 13rem;
+          width: 10rem;
           height: 6rem;
         }
         
@@ -185,7 +185,7 @@ let map;
 var onSuccess = function(position) {
     // hide load func(); 
     
-    initMap()
+  
     clearLocations() 
     myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude)
     map.setCenter(myLatLng);
@@ -212,12 +212,11 @@ var onSuccess = function(position) {
               'Timestamp: '         + position.timestamp                + '\n');
     };
     function onError(error) {
-      ons.notification.alert("Can't get GPS");
-
+      ons.notification.alert("Can't get GPS");  
         console.log('code: '    + error.code    + '\n' +
               'message: ' + error.message + '\n');
     }
-    var watchID = navigator.geolocation.watchPosition(onSuccess, onError, {maximumAge: 3000, timeout: 3000 });
+    var watchID = navigator.geolocation.watchPosition(onSuccess, onError, {maximumAge: 30000, timeout: 5000, enableHighAccuracy: false });
     
     let getpos = function(){return coord}
     
@@ -291,7 +290,12 @@ var onSuccess = function(position) {
     }
     function createMarker(point, story, user, date, dropID,vote) {
 
-            var image = (story=="me"? '/img/girl.png':'/img/animal/'+(Math.floor(Math.random() * 16) + 1  )+'.png')
+            var image = { 
+                          url: (story=="me"? '/img/girl.png':'/img/animal/'+(Math.floor(Math.random() * 16) + 1  )+'.png'),
+                          scaledSize: new google.maps.Size(50, 50), // scaled size
+                          origin: new google.maps.Point(0,0), // origin
+                          anchor: new google.maps.Point(0, 0) // anchor
+            }
             var marker;
             let options;
             if(story!="me"){
