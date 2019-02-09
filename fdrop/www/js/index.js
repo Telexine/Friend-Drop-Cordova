@@ -23,6 +23,7 @@ var app = {
     // Application Constructor
     initialize: function() {
         console.log("initialize")
+
         document.addEventListener("offline", onOffline, false);
         document.addEventListener("online", onOnline, false);
             function onOffline() {
@@ -32,8 +33,7 @@ var app = {
                  
             }
             function onOnline() {
-                initApp()
-                initMap()
+            
                 // Handle the online event
             }
     },
