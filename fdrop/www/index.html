@@ -127,9 +127,10 @@
               // User is signed in.
               document.getElementById("pages").style.display = "block"
               document.getElementById("login").style.display = "none"
-              console.log("logged")
-              
-             
+              $('.username').text(user.displayName)
+              $('#userintel').text(`Email :${user.email}`)
+              $('#userstatus').text(`Status Online`)
+              $('#curDisplay').attr("src",user.photoURL)
 
                 displayName = user.displayName;
               var email = user.email;
@@ -139,7 +140,7 @@
               var phoneNumber = user.phoneNumber;
               var providerData = user.providerData;
 
-            
+              
                
                const usersRef  = db.collection("user").doc(uid)
                
@@ -198,35 +199,25 @@
 
 
               user.getIdToken().then(function(accessToken) {
-                document.getElementById('sign-in-status').textContent = 'Signed in';
-                document.getElementById('sign-in').textContent = 'Sign out';
-                document.getElementById('account-details').textContent = JSON.stringify({
-                  displayName: displayName,
-                  email: email,
-                  emailVerified: emailVerified,
-                  phoneNumber: phoneNumber,
-                  photoURL: photoURL,
-                  uid: uid,
-                  accessToken: accessToken,
-                  providerData: providerData
-                }, null, '  ');
+               
               });
             } else {
               // User is signed out.
               console.log("not logged")
-              document.getElementById("pages").style.display = "none"
-              document.getElementById("login").style.display = "block"
-              document.getElementById('sign-in-status').textContent = 'Signed out';
-              document.getElementById('sign-in').textContent = 'Sign in';
-              document.getElementById('account-details').textContent = 'null';
+             
             }
           }, function(error) {
             console.log(error);
           });
         };
-
-  
-
+      
+      let logout = function(){
+        firebase.auth().signOut().then(function() {
+          // Sign-out successful.
+        }, function(error) {
+          // An error happened.
+        });
+      }
       // FirebaseUI config.
       var uiConfig = {
           signInSuccessUrl: '/',

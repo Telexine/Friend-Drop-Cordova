@@ -16,6 +16,18 @@
         .drop{
 
         }
+        .username{
+          text-align: left;
+          font-size: 1.3em;
+          font-weight: bold;
+        }
+        .avatar {
+          vertical-align: middle;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          padding:3px
+        }
         .page > .page__background {
             background: transparent;
         }
@@ -216,7 +228,7 @@ var onSuccess = function(position) {
         console.log('code: '    + error.code    + '\n' +
               'message: ' + error.message + '\n');
     }
-    var watchID = navigator.geolocation.watchPosition(onSuccess, onError, {maximumAge: 30000, timeout: 5000, enableHighAccuracy: false });
+    var watchID = navigator.geolocation.watchPosition(onSuccess, onError, {maximumAge: 30000, timeout: 60000, enableHighAccuracy: false });
     
     let getpos = function(){return coord}
     
