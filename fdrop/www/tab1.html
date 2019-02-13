@@ -121,8 +121,8 @@
         <ons-page>
  
           
-            <ons-card>
-              <img src="https://monaca.io/img/logos/download_image_onsenui_01.png" alt="Onsen UI" style="width: 100%">
+            <ons-card style="margin-top: 10px">
+               
               <div class="title">
                 <p>
                     <ons-input id="story" max="40" min="3" modifier="material" placeholder="เรื่อง" float style="width: 100%;"></ons-input>
@@ -212,20 +212,7 @@ var onSuccess = function(position) {
     createMarker(myLatLng,"me","2","4","5","6")
     loading("map",false)
     coord = [position.coords.latitude,position.coords.longitude]
-    /*
-     let marker = new google.maps.Marker({
-        position: myLatLng,
-        map: map,
-        icon: iconBase + 'track-0.png'
-    })*/
-        console.log('Latitude: '          + position.coords.latitude          + '\n' +
-              'Longitude: '         + position.coords.longitude         + '\n' +
-              'Altitude: '          + position.coords.altitude          + '\n' +
-              'Accuracy: '          + position.coords.accuracy          + '\n' +
-              'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
-              'Heading: '           + position.coords.heading           + '\n' +
-              'Speed: '             + position.coords.speed             + '\n' +
-              'Timestamp: '         + position.timestamp                + '\n');
+ 
     };
     function onError(error) {
       ons.notification.alert("Can't get GPS");  
@@ -262,7 +249,8 @@ var onSuccess = function(position) {
                     if (docSnapshot.exists) {
                       vote =  docSnapshot.data().vote
                     }
-                    createMarker(new google.maps.LatLng(drop.data.lat,drop.data.lon),drop.data.story,drop.data.name,drop.data.last_changed.toDate(),drop.id,vote)
+                     
+                    createMarker(new google.maps.LatLng(drop.data.lat,drop.data.lon),drop.data.story,  (drop.data.anonymity? "HIDDEN":drop.data.name )  ,drop.data.last_changed.toDate(),drop.id,vote)
               });
 
 
@@ -274,11 +262,7 @@ var onSuccess = function(position) {
          
       })
       return getdropsPromise;
-      /*
-      for(drop in drops){
-        console.log(drop.data)
-      }*/
-      //createMarker(myLatLng,"1","2","4","5","6")
+ 
     }
     function htmlToElement(html) {
       var template = document.createElement('template');
