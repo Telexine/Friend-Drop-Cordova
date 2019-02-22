@@ -208,7 +208,7 @@ var onSuccess = function(position) {
   
     clearLocations() 
     myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude)
-    map.setCenter(myLatLng);
+    if(map){map.setCenter(myLatLng);}
     updatecoord(position.coords.latitude,position.coords.longitude);
 
 

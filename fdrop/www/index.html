@@ -35,6 +35,15 @@
           gtag('js', new Date());
           gtag('config', 'UA-31066678-4');
         </script>
+        <link rel="manifest" href="/manifest.json">
+        <!-- icon in the highest resolution we need it for -->
+        <link rel="icon" sizes="192x192" href="img/icon-192.png">
+
+        <!-- reuse same icon for Safari -->
+        <link rel="apple-touch-icon" href="img/icon-192.png">
+        <meta name="theme-color" content="lavenderblush">
+
+
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
@@ -173,6 +182,7 @@
 
 
                /*LISTENER*/
+               /*
                 var listener_state = firebase.database().ref('/status/')
 
                 listener_state.on('child_changed', function(data) {
@@ -180,6 +190,8 @@
                     console.log(data.val())
                     //window.alert("sometext"+data.val());
                 });   
+                */
+
 
                 // PEOPLE vote your drop
                 db.collection("votes") 
@@ -345,15 +357,87 @@
                     <div id="firebaseui-auth-container"></div>
             </div>
                 
-                  
+    
 
         </div>
+
+        <template id="createInstallDialog.html">
+            <ons-alert-dialog id="createInstallDialog" modifier="rowfooter">
+                <div class="alert-dialog-title">Add to Home screen</div>
+                <div class="alert-dialog-content">
+                  Animal Drop
+                </div>
+                <div class="alert-dialog-footer">
+                  <ons-alert-dialog-button onclick="hideAlertDialog()">Cancel</ons-alert-dialog-button>
+                  <ons-alert-dialog-button onclick="promptInstall()">ADD</ons-alert-dialog-button>
+                </div>
+              </ons-alert-dialog>
+            </template>
+          
+
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
     </body>
     <script>
 
-   
+
+// Service Worker
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker
+           .register('/sw.js')
+           .then(function() { console.log("Service Worker Registered"); });
+}
+
+/* ask to create shortcut */
+let deferredPrompt;
+let btnAdd = document.getElementById('createshortcut')
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent Chrome 67 and earlier from automatically showing the prompt
+  e.preventDefault();
+  // Stash the event so it can be triggered later.
+  deferredPrompt = e;
+  // Update UI notify the user they can add to home screen
+  createInstallDialog()
+});
+var hideAlertDialog = function() {
+  document
+    .getElementById('my-alert-dialog')
+    .hide();
+};
+
+
+  let promptInstall = function(){
+    // hide our user interface that shows our A2HS button
+ 
+    // Show the prompt
+    deferredPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    deferredPrompt.userChoice
+      .then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
+        } else {
+          console.log('User dismissed the A2HS prompt');
+        }
+        deferredPrompt = null;
+      });
+    }
+ 
+
+var createInstallDialog = function() {
+  var dialog = document.getElementById('createInstallDialog');
+
+  if (dialog) {
+    dialog.show();
+  } else {
+    ons.createElement('createInstallDialog.html', { append: true })
+      .then(function(dialog) {
+        dialog.show();
+      });
+  }
+};
+
 
 
 initApp()

@@ -1,0 +1,21 @@
+{
+    "name": "Animal Drop",
+    "icons": [
+      {
+        "src": "/img/icon-512.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      },
+      {
+        "src": "/img/icon-192.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      }
+    ],
+    "start_url": "/index.html",
+    "background_color": "lavender",
+    "display": "standalone",
+    "theme_color": "lavender",
+    "gcm_sender_id": "995741645756"
+   
+  }
