@@ -58,6 +58,7 @@
         <script src="js/firebase-app.js"></script>
         <script src="js/firebase-auth.js"></script>
         <script src="js/firebase-firestore.js"></script>
+        <script src="js/firebase-messaging.js"></script>
         <script src="js/firebase-database.js"></script>
         <script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCjHWJF9-ArwEMdDwruzHXHYEXNpOpF-qE'
         async defer></script>
@@ -69,7 +70,7 @@
         
         <title>Animal Drop beta_1.9b</title>
         <script>
-
+          
     
         var dropCache = {
             source: 'cache'
@@ -151,6 +152,51 @@
         const db = firebase.firestore();
         db.settings(settings);
         let  userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
+        // Retrieve Firebase Messaging object.
+        const messaging = firebase.messaging();
+        messaging.usePublicVapidKey("BC89SlE5chzlEulpYNawXkRb73xaABsQwOsdKRG67rjHXP2VKvVmr7wIGAjcDzkAlLwR0jEL1OAKnADzEj58ktY");
+        messaging.requestPermission().then(function() {
+          console.log('Notification permission granted.');
+          // TODO(developer): Retrieve an Instance ID token for use with FCM.
+          // ...
+        }).catch(function(err) {
+          console.log('Unable to get permission to notify.', err);
+        });
+              messaging.getToken().then(function(currentToken) {
+        if (currentToken) {
+          sendTokenToServer(currentToken);
+          updateUIForPushEnabled(currentToken);
+        } else {
+          // Show permission request.
+          console.log('No Instance ID token available. Request permission to generate one.');
+          // Show permission UI.
+          updateUIForPushPermissionRequired();
+          setTokenSentToServer(false);
+        }
+      }).catch(function(err) {
+        console.log('An error occurred while retrieving token. ', err);
+        showToken('Error retrieving Instance ID token. ', err);
+        setTokenSentToServer(false);
+      });
+      // Callback fired if Instance ID token is updated.
+      messaging.onTokenRefresh(function() {
+        messaging.getToken().then(function(refreshedToken) {
+          console.log('Token refreshed.');
+          // Indicate that the new Instance ID token has not yet been sent to the
+          // app server.
+          setTokenSentToServer(false);
+          // Send Instance ID token to app server.
+          sendTokenToServer(refreshedToken);
+          // ...
+        }).catch(function(err) {
+          console.log('Unable to retrieve refreshed token ', err);
+          showToken('Unable to retrieve refreshed token ', err);
+        });
+      });
+      messaging.onMessage(function(payload) {
+        console.log('Message received. ', payload);
+        ons.notification.toast(`<span style="color:#2196f3">${payload}</span>`, { timeout: 4000, animation: 'fall' })
+      });
 
         initApp = function() {
           console.log("initApp")
@@ -335,6 +381,9 @@
       </script>
     </head>
     <body>
+
+
+      
             <div id="pages"style="display: none;">
             <ons-page>
                     
