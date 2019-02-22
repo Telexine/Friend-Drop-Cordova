@@ -41,24 +41,24 @@
         <link rel="stylesheet" type="text/css" href="css/index.css">
         <link rel="stylesheet" type="text/css" href="css/animate.css">
 
-        <link rel="stylesheet" href="node_modules/onsenui/css/onsenui.css">
-        <link rel="stylesheet" href="node_modules/onsenui/css/onsen-css-components.min.css">
-        <script src="node_modules/onsenui/js/onsenui.min.js"></script>
-        <script src="node_modules/jquery/dist/jquery.min.js"></script>
-        <script src="node_modules/firebaseui/dist/firebaseui.js"></script>
-        <script src="node_modules/firebase/firebase-app.js"></script>
-        <script src="node_modules/firebase/firebase-auth.js"></script>
-        <script src="node_modules/firebase/firebase-firestore.js"></script>
-        <script src="node_modules/firebase/firebase-database.js"></script>
+        <link rel="stylesheet" href="css/onsenui.css">
+        <link rel="stylesheet" href="css/onsen-css-components.min.css">
+        <script src="js/onsenui.min.js"></script>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/firebaseui.js"></script>
+        <script src="js/firebase-app.js"></script>
+        <script src="js/firebase-auth.js"></script>
+        <script src="js/firebase-firestore.js"></script>
+        <script src="js/firebase-database.js"></script>
         <script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCjHWJF9-ArwEMdDwruzHXHYEXNpOpF-qE'
         async defer></script>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
         <script src="js/configs.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.3/Rx.js"></script>
-        <link type="text/css" rel="stylesheet" href="node_modules/firebaseui/dist/firebaseui.css" />
+         
+        <link type="text/css" rel="stylesheet" href="css/firebaseui.css" />
         
-        <title>Animal Drop beta_1.6b</title>
+        <title>Animal Drop beta_1.9b</title>
         <script>
 
     
@@ -73,18 +73,26 @@
                     .then((docSnapshot) => {
                       if (docSnapshot.exists) {
                                point = docSnapshot.data().vote+(upvote? 1:-1)
-                              voteRef.update({
+                                voteRef.update({
                                 vote: point
                               })  
-                        
+                          
                       } else {
                           voteRef.set({
                             dropID:  dropID,
                             vote:(upvote? 1:-1)
                           }) // create the document
+                         
+                        
                         }
+                        $("#vot_numID_"+dropID).text(( parseInt($("#vot_numID_"+dropID).text())+parseInt(upvote? 1:-1)) )
                   });
-        }
+        
+              ons.notification.toast((upvote? "You Nudge <span style='color:#0076ff'>Like</span> ": "<span style='color:red'>Drop!!</span> ")+"ID: " + dropID, { timeout: 2000 }); // Shows from 0s to 2s
+
+           
+        
+                }
        
       let getAllDrop = async function(){
         const dropRef  = db.collection("drop")
@@ -133,7 +141,7 @@
         const settings = {timestampsInSnapshots: true}
         const db = firebase.firestore();
         db.settings(settings);
-        const  userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
+        let  userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
 
         initApp = function() {
           console.log("initApp")
@@ -158,9 +166,41 @@
               var providerData = user.providerData;
 
               
-               
+              userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
                const usersRef  = db.collection("user").doc(uid)
-               
+
+
+
+
+               /*LISTENER*/
+                var listener_state = firebase.database().ref('/status/')
+
+                listener_state.on('child_changed', function(data) {
+
+                    console.log(data.val())
+                    //window.alert("sometext"+data.val());
+                });   
+
+                // PEOPLE vote your drop
+                db.collection("votes") 
+                .onSnapshot(function(snapshot) {
+                    snapshot.docChanges().forEach(function(change) {
+                      if (change.type === "modified") {
+                            db.collection("drop").doc(change.doc.data().dropID).get()
+                            .then((docSnapshot) => {
+                              if(docSnapshot.data().user==uid){
+                                ons.notification.toast("People <span style='color:fuchsia'>Interact with your pet!</span>", { timeout: 2000 }); // Shows from 0s to 2s
+                              }
+                            });
+                        }
+                    });
+                });
+
+                
+                 
+
+
+
                // Is user Already exist on the systems
                usersRef.get()
                   .then((docSnapshot) => {
@@ -180,10 +220,12 @@
               var isOfflineForDatabase = {
                   state: 'offline',
                   last_changed: firebase.database.ServerValue.TIMESTAMP,
+                  name:displayName
               };
               var isOnlineForDatabase = {
                   state: 'online',
                   last_changed: firebase.database.ServerValue.TIMESTAMP,
+                  name:displayName
               };
               
 
@@ -310,14 +352,18 @@
         <script type="text/javascript" src="js/index.js"></script>
     </body>
     <script>
-        initApp()
+
+   
+
+
+initApp()
         
     document.addEventListener('prechange', function(event) {
-  document.querySelector('ons-toolbar .center')
-    .innerHTML = event.tabItem.getAttribute('label');
-
-
-
+     document.querySelector('ons-toolbar .center')
+        .innerHTML = event.tabItem.getAttribute('label');
+        
+ 
+   
 });
 
 

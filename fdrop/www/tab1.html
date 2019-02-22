@@ -332,7 +332,7 @@ var onSuccess = function(position) {
             var html;
  
   
-            html = `<div class="drop"><span class="storyline"> ${story}  </span> -><span class="vote" style="color:${(vote>0?"green":"red")}">${vote}</span>  <br/>
+            html = `<div class="drop"><span class="storyline"> ${story}  </span> -><span class="vote" id="vot_numID_${dropID}" style="color:${(vote>0?"green":"red")}">${vote}</span>  <br/>
                       ${user}@${ts}    <br/>
                       <ons-button id='UP_${dropID}' onclick="pushThumb('${dropID}',true);return false;"><i class="material-icons btn_thumb">thumb_up</i></ons-button>
                       <ons-button id='DOWN_${dropID}' onclick="pushThumb('${dropID}',false);return false;"  style="background-color:red"><i class="material-icons btn_thumb">thumb_down</i></ons-button><br/>
