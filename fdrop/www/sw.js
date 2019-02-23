@@ -3,6 +3,9 @@ importScripts('/cache-polyfill.js');
 var CACHE_NAME = 'animal-drop';
 var urlsToCache = [
       '/',
+      'tab1.html',
+      'tab2.html',
+      'cache-polyfill.js',
       '/css/firebaseui.css',
       '/img/animal/1.png',
       '/img/animal/2.png',
@@ -25,9 +28,24 @@ var urlsToCache = [
       '/img/icon-192.png',
       '/img/icon-512.png',
       '/img/logo.png',
-      '/css/font_awesome/fonts/fa-brands-400.woff2'
-   
-
+      '/css/font_awesome/fonts/fa-brands-400.woff2',
+      '/js/configs.js',
+      '/js/firebase-app.js',
+      '/js/index.js',
+      '/js/onsenui.min.js',
+      '/js/jquery.min.js',
+      '/js/firebaseui.js',
+      '/js/firebase-messaging.js',
+      '/js/firebase-firestore.js',
+      '/js/firebase-database.js',
+      '/js/firebase-auth.js',
+      '/css/dark-onsen-css-components.css',
+      '/css/dark-onsen-css-components.min.css',
+      '/css/index.css',
+      '/css/onsen-css-components.min.css',
+      '/css/animate.css',
+      '/css/onsenui.css',
+      '/css/onsenui-core.css'
     ];
     
     self.addEventListener('install', function(event) {

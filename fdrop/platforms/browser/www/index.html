@@ -68,7 +68,7 @@
          
         <link type="text/css" rel="stylesheet" href="css/firebaseui.css" />
         
-        <title>Animal Drop 2.0b</title>
+        <title>Animal Drop 2.01b</title>
         <script>
           
     
@@ -405,12 +405,7 @@
                     </div>
                     <div id="firebaseui-auth-container"></div>
             </div>
-                
-    
-
         </div>
- 
-
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
     </body>
@@ -436,8 +431,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // Update UI notify the user they can add to home screen
    
 });
- 
-
   let promptInstall = function(){
     // hide our user interface that shows our A2HS button
  
@@ -454,19 +447,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
         deferredPrompt = null;
       });
     }
- 
- 
-
-
-
 initApp()
-        
     document.addEventListener('prechange', function(event) {
      document.querySelector('ons-toolbar .center')
         .innerHTML = event.tabItem.getAttribute('label');
-        
- 
-   
 });
 
 

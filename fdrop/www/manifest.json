@@ -14,7 +14,7 @@
     ],
     "start_url": "/index.html",
     "background_color": "lavender",
-    "display": "standalone",
+    "display": "fullscreen",
     "theme_color": "lavender",
     "gcm_sender_id": "995741645756"
    
