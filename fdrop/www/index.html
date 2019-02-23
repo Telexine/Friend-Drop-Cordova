@@ -41,7 +41,7 @@
          
         <link type="text/css" rel="stylesheet" href="css/firebaseui.css" />
         
-        <title>Animal Drop 2.02b</title>
+        <title>Animal Drop 2.05b</title>
         <script>
           
     
@@ -193,22 +193,7 @@
               
               userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
                const usersRef  = db.collection("user").doc(uid)
-
-
-
-
-               /*LISTENER*/
-               /*
-                var listener_state = firebase.database().ref('/status/')
-
-                listener_state.on('child_changed', function(data) {
-
-                    console.log(data.val())
-                    //window.alert("sometext"+data.val());
-                });   
-                */
-
-
+ 
                 // PEOPLE vote your drop
                 db.collection("votes") 
                 .onSnapshot(function(snapshot) {

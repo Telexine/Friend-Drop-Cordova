@@ -202,28 +202,31 @@ let map;
 
       var markers = [];
       let coord = [];
+      let tried=0;
+      setInterval(tried=0, 50000);
 var onSuccess = function(position) {
-    // hide load func(); 
-    
-  
-    clearLocations() 
-    myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude)
-    if(map){map.setCenter(myLatLng);}
-    updatecoord(position.coords.latitude,position.coords.longitude);
+   
+    if(tried<3){
+      
+      clearLocations() 
+      myLatLng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude)
+      if(map){map.setCenter(myLatLng);}
+      updatecoord(position.coords.latitude,position.coords.longitude);
 
 
-    fetchallDrop().then(function(result){console.log("Fetch All drops")})
-    createMarker(myLatLng,"me","2","4","5","6")
-    loading("map",false)
-    coord = [position.coords.latitude,position.coords.longitude]
- 
+      fetchallDrop().then(function(result){console.log("Fetch All drops")})
+      createMarker(myLatLng,"me","2","4","5","6")
+       // hide load func(); 
+      loading("map",false)
+      coord = [position.coords.latitude,position.coords.longitude]
+      }
     };
     function onError(error) {
       ons.notification.alert("Can't get GPS");  
         console.log('code: '    + error.code    + '\n' +
               'message: ' + error.message + '\n');
     }
-    var watchID = navigator.geolocation.watchPosition(onSuccess, onError, {maximumAge: 30000, timeout: 60000, enableHighAccuracy: false });
+    var watchID = navigator.geolocation.watchPosition(onSuccess, onError, {maximumAge: 50000, timeout: 50000, enableHighAccuracy: false });
     
     let getpos = function(){return coord}
     
