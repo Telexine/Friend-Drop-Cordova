@@ -28,42 +28,191 @@
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-31066678-4"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'UA-31066678-4');
+        </script>
+        <link rel="manifest" href="/manifest.json">
+        <!-- icon in the highest resolution we need it for -->
+        <link rel="icon" sizes="192x192" href="img/icon-192.png">
+
+        <!-- reuse same icon for Safari -->
+        <link rel="apple-touch-icon" href="img/icon-192.png">
+        <meta name="theme-color" content="lavenderblush">
+
+
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
         <link rel="stylesheet" type="text/css" href="css/index.css">
+        <link rel="stylesheet" type="text/css" href="css/animate.css">
 
-        <link rel="stylesheet" href="node_modules/onsenui/css/onsenui.css">
-        <link rel="stylesheet" href="node_modules/onsenui/css/onsen-css-components.min.css">
-        <script src="node_modules/onsenui/js/onsenui.min.js"></script>
-        <script src="node_modules/jquery/dist/jquery.min.js"></script>
-        <script src="node_modules/firebaseui/dist/firebaseui.js"></script>
-        <script src="node_modules/firebase/firebase-app.js"></script>
-        <script src="node_modules/firebase/firebase-auth.js"></script>
-        <script src="node_modules/firebase/firebase-firestore.js"></script>
-        <script src="node_modules/firebase/firebase-database.js"></script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSeA4kIroGg2vLOu5RxTKUCLblfs3X66s&callback=initMap" async defer></script>
-        
+        <link rel="stylesheet" href="css/onsenui.css">
+        <link rel="stylesheet" href="css/onsen-css-components.min.css">
+        <script src="js/onsenui.min.js"></script>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/firebaseui.js"></script>
+        <script src="js/firebase-app.js"></script>
+        <script src="js/firebase-auth.js"></script>
+        <script src="js/firebase-firestore.js"></script>
+        <script src="js/firebase-messaging.js"></script>
+        <script src="js/firebase-database.js"></script>
+        <script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCjHWJF9-ArwEMdDwruzHXHYEXNpOpF-qE'
+        async defer></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
         <script src="js/configs.js"></script>
-        <link type="text/css" rel="stylesheet" href="node_modules/firebaseui/dist/firebaseui.css">
-        <title>Friend Drop</title>
+         
+        <link type="text/css" rel="stylesheet" href="css/firebaseui.css" />
+        
+        <title>Animal Drop 2.0b</title>
         <script>
+          
+    
+        var dropCache = {
+            source: 'cache'
+        };
+        let pushThumb = function(dropID,upvote/*true = Up; false = down*/){
+            const voteRef  = db.collection("votes").doc(dropID)
 
-        // FirebaseUI config.
-        let userStatusDatabaseRef 
-        window.addEventListener('load', function() {
+                // Is vote Already exist on the systems
+                voteRef.get({ source: 'server' })
+                    .then((docSnapshot) => {
+                      if (docSnapshot.exists) {
+                               point = docSnapshot.data().vote+(upvote? 1:-1)
+                                voteRef.update({
+                                vote: point
+                              })  
+                          
+                      } else {
+                          voteRef.set({
+                            dropID:  dropID,
+                            vote:(upvote? 1:-1)
+                          }) // create the document
+                         
+                        
+                        }
+                        $("#vot_numID_"+dropID).text(( parseInt($("#vot_numID_"+dropID).text())+parseInt(upvote? 1:-1)) )
+                  });
+        
+              ons.notification.toast((upvote? "You Nudge <span style='color:#0076ff'>Like</span> ": "<span style='color:red'>Drop!!</span> ")+"ID: " + dropID, { timeout: 2000 }); // Shows from 0s to 2s
+
            
-          let  db,uid;
-          initApp = function() {
+        
+                }
+       
+      let getAllDrop = async function(){
+        const dropRef  = db.collection("drop")
+        let data= [];
+        // Get a document, forcing the SDK to fetch from the offline cache.
+        await dropRef.get().then(function(query) {
+            
+               query.forEach(function(doc) {
+ 
+                data.push({id:doc.id,data:doc.data()});
+                //console.log(doc.id, " => ", doc.data());
+              })
+               
+          }); 
+          return data
+      };
+         
+      let sendDrop = function(anon,story){
+          $("#story").removeClass("animated shake")
+          if(story==""){
+            $("#story").addClass("animated shake")
+            return;
+          }
+          $("#story").removeClass("animated shake")
+              const dropRef  = db.collection("drop")
+              coord = getpos()
+               
+              dropRef.add({
+                story:story,
+                anonymity:anon,
+                lat: coord[0],
+                lon: coord[1],
+                last_changed: firebase.firestore.FieldValue.serverTimestamp(),
+                user:uid,
+                name:displayName
+              })
+              ons.notification.toast('Sended Drop ' + name, { timeout: 2000 }); // Shows from 0s to 2s
+              hideDialog('my-dialog')
+              setTimeout(function () {
+                location.reload();
+              }, 5000);
+        }
+
+
+        let  uid,displayName;
+        const settings = {timestampsInSnapshots: true}
+        const db = firebase.firestore();
+        db.settings(settings);
+        let  userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
+        // Retrieve Firebase Messaging object.
+        const messaging = firebase.messaging();
+        messaging.usePublicVapidKey("BC89SlE5chzlEulpYNawXkRb73xaABsQwOsdKRG67rjHXP2VKvVmr7wIGAjcDzkAlLwR0jEL1OAKnADzEj58ktY");
+        messaging.requestPermission().then(function() {
+          console.log('Notification permission granted.');
+          // TODO(developer): Retrieve an Instance ID token for use with FCM.
+          // ...
+        }).catch(function(err) {
+          console.log('Unable to get permission to notify.', err);
+        });
+              messaging.getToken().then(function(currentToken) {
+        if (currentToken) {
+          sendTokenToServer(currentToken);
+          updateUIForPushEnabled(currentToken);
+        } else {
+          // Show permission request.
+          console.log('No Instance ID token available. Request permission to generate one.');
+          // Show permission UI.
+          updateUIForPushPermissionRequired();
+          setTokenSentToServer(false);
+        }
+      }).catch(function(err) {
+        console.log('An error occurred while retrieving token. ', err);
+        showToken('Error retrieving Instance ID token. ', err);
+        setTokenSentToServer(false);
+      });
+      // Callback fired if Instance ID token is updated.
+      messaging.onTokenRefresh(function() {
+        messaging.getToken().then(function(refreshedToken) {
+          console.log('Token refreshed.');
+          // Indicate that the new Instance ID token has not yet been sent to the
+          // app server.
+          setTokenSentToServer(false);
+          // Send Instance ID token to app server.
+          sendTokenToServer(refreshedToken);
+          // ...
+        }).catch(function(err) {
+          console.log('Unable to retrieve refreshed token ', err);
+          showToken('Unable to retrieve refreshed token ', err);
+        });
+      });
+      messaging.onMessage(function(payload) {
+        console.log('Message received. ', payload);
+        ons.notification.toast(`<span style="color:#2196f3">${payload}</span>`, { timeout: 4000, animation: 'fall' })
+      });
+
+        initApp = function() {
+          console.log("initApp")
           firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
               // User is signed in.
+              initMap()
+
               document.getElementById("pages").style.display = "block"
               document.getElementById("login").style.display = "none"
-              initMap();
-              const db = firebase.firestore();
+              $('.username').text(user.displayName)
+              $('#userintel').text(`${user.email}`)
+              $('#userstatus').text(`Status Online`)
+              $('#curDisplay').attr("src",user.photoURL)
 
-              var displayName = user.displayName;
+                displayName = user.displayName;
               var email = user.email;
               var emailVerified = user.emailVerified;
               var photoURL = user.photoURL;
@@ -71,9 +220,45 @@
               var phoneNumber = user.phoneNumber;
               var providerData = user.providerData;
 
-             userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
               
+              userStatusDatabaseRef = firebase.database().ref('/status/' + uid); 
                const usersRef  = db.collection("user").doc(uid)
+
+
+
+
+               /*LISTENER*/
+               /*
+                var listener_state = firebase.database().ref('/status/')
+
+                listener_state.on('child_changed', function(data) {
+
+                    console.log(data.val())
+                    //window.alert("sometext"+data.val());
+                });   
+                */
+
+
+                // PEOPLE vote your drop
+                db.collection("votes") 
+                .onSnapshot(function(snapshot) {
+                    snapshot.docChanges().forEach(function(change) {
+                      if (change.type === "modified") {
+                            db.collection("drop").doc(change.doc.data().dropID).get()
+                            .then((docSnapshot) => {
+                              if(docSnapshot.data().user==uid){
+                                ons.notification.toast("People <span style='color:fuchsia'>Interact with your pet!</span>", { timeout: 2000 }); // Shows from 0s to 2s
+                              }
+                            });
+                        }
+                    });
+                });
+
+                
+                 
+
+
+
                // Is user Already exist on the systems
                usersRef.get()
                   .then((docSnapshot) => {
@@ -85,7 +270,6 @@
                     } else {
                       usersRef.set({
                         displayName:  displayName,
-                        email:email,  
                         photoURL:photoURL
                       }) // create the document
                     }
@@ -94,10 +278,12 @@
               var isOfflineForDatabase = {
                   state: 'offline',
                   last_changed: firebase.database.ServerValue.TIMESTAMP,
+                  name:displayName
               };
               var isOnlineForDatabase = {
                   state: 'online',
                   last_changed: firebase.database.ServerValue.TIMESTAMP,
+                  name:displayName
               };
               
 
@@ -109,7 +295,7 @@
                   if (snapshot.val() == false) {
                       return;
                   };
-                
+                  
                   // If we are currently connected, then use the 'onDisconnect()' 
                   // method to add a set which will only trigger once this 
                   // client has disconnected by closing the app, 
@@ -129,46 +315,38 @@
 
 
               user.getIdToken().then(function(accessToken) {
-                document.getElementById('sign-in-status').textContent = 'Signed in';
-                document.getElementById('sign-in').textContent = 'Sign out';
-                document.getElementById('account-details').textContent = JSON.stringify({
-                  displayName: displayName,
-                  email: email,
-                  emailVerified: emailVerified,
-                  phoneNumber: phoneNumber,
-                  photoURL: photoURL,
-                  uid: uid,
-                  accessToken: accessToken,
-                  providerData: providerData
-                }, null, '  ');
+               
               });
             } else {
               // User is signed out.
+              console.log("not logged")
               document.getElementById("pages").style.display = "none"
               document.getElementById("login").style.display = "block"
-              document.getElementById('sign-in-status').textContent = 'Signed out';
-              document.getElementById('sign-in').textContent = 'Sign in';
-              document.getElementById('account-details').textContent = 'null';
             }
           }, function(error) {
             console.log(error);
           });
         };
-
-  
-
+      
+      let logout = function(){
+        firebase.auth().signOut().then(function() {
+          // Sign-out successful.
+        }, function(error) {
+          // An error happened.
+        });
+      }
       // FirebaseUI config.
       var uiConfig = {
           signInSuccessUrl: '/',
           signInOptions: [
             // Leave the lines as is for the providers you want to offer your users.
             firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-            //firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+           // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
           // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
             //firebase.auth.GithubAuthProvider.PROVIDER_ID,
             //firebase.auth.EmailAuthProvider.PROVIDER_ID,
             //firebase.auth.PhoneAuthProvider.PROVIDER_ID,
-            firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
+            //firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
           ],
           // tosUrl and privacyPolicyUrl accept either url string or a callback
           // function.
@@ -184,50 +362,113 @@
         var ui = new firebaseui.auth.AuthUI(firebase.auth());
         // The start method will wait until the DOM is loaded.
         ui.start('#firebaseui-auth-container', uiConfig);
-          initApp()
-      });
+           
+    
       
       let updatecoord = function(Lat,Lng){
-            userStatusDatabaseRef.update({lat:Lat,lng:Lng});
-             
+        try{
+            userStatusDatabaseRef.update({lat:Lat,lon:Lng});
+        }catch(E){
+          console.log("can't update COORD to svr")
+        }
          }
-
+      let  debounce = function(el, event, time = 2000) {
+        var element = document.querySelector(el)
+        var eventObserver = Rx.Observable.fromEvent(element, event);
+        return eventObserver.debounceTime(time).map(event => event.target.value);
+      }
+ 
       </script>
     </head>
     <body>
-            <div id="pages" style="display: none;">
+
+
+      
+            <div id="pages"style="display: none;">
             <ons-page>
                     
                     <ons-toolbar>
-                      <div class="center">Tab 1</div>
+                      <div class="center">Animal Drop</div>
                     </ons-toolbar>
                   
-                    <ons-tabbar swipeable="" position="auto">
-                      <ons-tab page="/tab1.html" label="Tab 1" icon="ion-home, material:md-home" badge="7" active="">
+                    <ons-tabbar swipeable position="auto">
+                      <ons-tab page="/tab1.html" label="Drop" icon="ion-home, material:md-home"  active>
                       </ons-tab>
-                      <ons-tab page="/tab2.html" label="Tab 2" icon="md-settings" active-icon="md-face">
+                      <ons-tab page="/tab2.html" label="Your Info" icon="md-settings" active-icon="md-face">
                       </ons-tab>
                     </ons-tabbar>
             </ons-page>
             </div>
             <div id="login" style="padding:20px;display: none;">
                     <div style="margin:auto;max-width: 360px;">
-                    <img src="img/fd.png">
+                    <img style="width: 40%;display: block;margin: auto;"src="img/logo.png">
                     </div>
                     <div id="firebaseui-auth-container"></div>
             </div>
                 
-                  
+    
 
-        
+        </div>
+ 
+
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
     </body>
     <script>
-    
-    document.addEventListener('prechange', function(event) {
-  document.querySelector('ons-toolbar .center')
-    .innerHTML = event.tabItem.getAttribute('label');
+
+
+// Service Worker
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker
+           .register('/sw.js')
+           .then(function() { console.log("Service Worker Registered"); });
+}
+
+/* ask to create shortcut */
+let deferredPrompt;
+let btnAdd = document.getElementById('createshortcut')
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent Chrome 67 and earlier from automatically showing the prompt
+  e.preventDefault();
+  // Stash the event so it can be triggered later.
+  deferredPrompt = e;
+  // Update UI notify the user they can add to home screen
+   
 });
+ 
+
+  let promptInstall = function(){
+    // hide our user interface that shows our A2HS button
+ 
+    // Show the prompt
+    deferredPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    deferredPrompt.userChoice
+      .then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the A2HS prompt');
+        } else {
+          console.log('User dismissed the A2HS prompt');
+        }
+        deferredPrompt = null;
+      });
+    }
+ 
+ 
+
+
+
+initApp()
+        
+    document.addEventListener('prechange', function(event) {
+     document.querySelector('ons-toolbar .center')
+        .innerHTML = event.tabItem.getAttribute('label');
+        
+ 
+   
+});
+
+
     </script>
 </html>

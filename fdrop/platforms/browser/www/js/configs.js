@@ -1,12 +1,10 @@
 var FIREBASE_CONFIG = {
-    apiKey: "AIzaSyAy0CauI40fU0x9p2yo7TrinvfLy773jdg",
-    authDomain: "friend-drop.firebaseapp.com",
-    databaseURL: "https://friend-drop.firebaseio.com",
-    projectId: "friend-drop",
-    storageBucket: "friend-drop.appspot.com",
-    messagingSenderId: "621509072046"
+    apiKey: "AIzaSyCdCWFK94CLZrT7Q_vxGVW67PJl4sc75pY",
+    authDomain: "animaldrop-8d30c.firebaseapp.com",
+    databaseURL: "https://animaldrop-8d30c.firebaseio.com",
+    projectId: "animaldrop-8d30c",
+    storageBucket: "",
+    messagingSenderId: "995741645756"
   };
   firebase.initializeApp(FIREBASE_CONFIG);
-
-
  

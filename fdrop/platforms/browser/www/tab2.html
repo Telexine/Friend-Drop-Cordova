@@ -1,9 +1,27 @@
 <ons-page id="Tab2">
-        <p style="text-align: center;">
-              
-          <h1>Welcome to My Awesomeddd App</h1>
-          <div id="sign-in-status"></div>
-          <div id="sign-in"></div>
-          <div id="account-details"></div>
-        </p>
-      </ons-page>
+     
+               
+  <ons-card>
+    <div>
+        <div style="width:20%">
+          <img id="curDisplay" style="float:left" class="avatar" src="https://monaca.io/img/logos/download_image_onsenui_01.png" alt="ีUser Avatar"  >
+        </div>
+        <div style="width:70%">
+          <div class="username">
+            username
+          </div>
+        </div>
+    </div>
+    <div id="userintel">
+        Email
+    </div>
+    </div>
+    <div style="padding-top:3px"class="content">
+ 
+      <ons-list>
+        <ons-list-header id="userstatus" >Status</ons-list-header>
+        <ons-list-item onclick="logout()">Log out</ons-list-item>
+      </ons-list>
+    </div>
+  </ons-card>
+</ons-page>
