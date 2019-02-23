@@ -1,33 +1,6 @@
 <!DOCTYPE html>
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
-<html>
+<html lang="en">
     <head>
-        <!--
-        Customize this policy to fit your own app's needs. For more guidance, see:
-            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
-        Some notes:
-            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
-            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-                * Enable inline JS: add 'unsafe-inline' to default-src
-        -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-31066678-4"></script>
         <script>
           window.dataLayer = window.dataLayer || [];
@@ -43,7 +16,7 @@
         <link rel="apple-touch-icon" href="img/icon-192.png">
         <meta name="theme-color" content="lavenderblush">
 
-
+        <meta name="description" content="Social APP For a nearby topic">
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
@@ -68,7 +41,7 @@
          
         <link type="text/css" rel="stylesheet" href="css/firebaseui.css" />
         
-        <title>Animal Drop 2.01b</title>
+        <title>Animal Drop 2.02b</title>
         <script>
           
     
@@ -174,8 +147,6 @@
           setTokenSentToServer(false);
         }
       }).catch(function(err) {
-        console.log('An error occurred while retrieving token. ', err);
-        showToken('Error retrieving Instance ID token. ', err);
         setTokenSentToServer(false);
       });
       // Callback fired if Instance ID token is updated.
@@ -189,8 +160,7 @@
           sendTokenToServer(refreshedToken);
           // ...
         }).catch(function(err) {
-          console.log('Unable to retrieve refreshed token ', err);
-          showToken('Unable to retrieve refreshed token ', err);
+
         });
       });
       messaging.onMessage(function(payload) {
