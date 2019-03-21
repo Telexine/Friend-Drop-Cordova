@@ -1,6 +1,6 @@
 # Friend-Drop-Cordova
 
-Cordovar + Webcomponent App Project for oppinion in nearby place
+Cordova + web-component App Project for oppinion in nearby place
 
 
 ![image](https://github.com/Telexine/Friend-Drop-Cordova/blob/master/ss3.png?raw=true)
